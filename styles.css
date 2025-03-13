@@ -3,12 +3,17 @@
     padding: 0;
     box-sizing: border-box;
     font-family: "Karla", sans-serif;
+    text-decoration: none;
+    color: white;
 }
 
 body {
+    display: flex;
     background-color: #222;
     color: white;
     text-align: center;
+    height: 100vh;
+    flex-direction: column;
 }
 
 header {
@@ -31,11 +36,27 @@ footer {
     background-color: #111;
     color: white;
     padding: 20px;
-    position: absolute;
+    position: relative;
     width: 100%;
-    margin-top: 10%;
 }
 
+.button {
+    font-size: 20px;
+    font-weight: bold;
+    width: 200px;
+    color: white;
+    text-decoration: none;
+    background-color: #282a8e;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.button i {
+    margin-right: 10px;
+}
 
 .logo {
     width: 60px;
@@ -49,7 +70,7 @@ footer {
     gap: 20px;
     padding: 20px;
     max-width: 800px;
-    margin: auto;
+    margin: 0 auto 120px auto;
 }
 
 .book {
@@ -67,6 +88,11 @@ footer {
     cursor: pointer;
 }
 
+.book:hover {
+    transform: scale(1.05);
+    transition: transform 0.5s;
+}
+
 .book:hover .overlay {
     background: rgba(0, 0, 0, 0.1);
     transition: background 0.5s;
@@ -78,14 +104,6 @@ footer {
     left: 0;
     width: 100%;
     height: 100%;
-}
-
-.book-title {
-    position: relative;
-    font-size: 0.9rem;
-    color: white;
-    text-align: center;
-    padding-top: 4px;
 }
 
 .age-rating {
@@ -130,3 +148,60 @@ footer {
     background: #555;
 }
 
+.book-details {
+    padding: 20px;
+    max-width: 900px;
+    margin: auto;
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+}
+
+.book-cover {
+    width: 200px;
+    height: 300px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.book-info {
+    flex: 1;
+    text-align: left;
+    padding-left: 20px;
+
+}
+
+.book-title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.book-author {
+    color: #6b8cff;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+
+.age-badge-two {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    color: white;
+    z-index: 2;
+    margin-right: 10px;
+}
+
+.age-rating-two {
+    padding: 5px 10px;
+    margin-bottom: 10px;
+}
+
+.related-container {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+}
