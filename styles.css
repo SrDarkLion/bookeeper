@@ -66,11 +66,12 @@ footer {
 
 .library {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 20px;
     padding: 20px;
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto 120px auto;
+    width: 95%;
 }
 
 .book {
@@ -155,6 +156,8 @@ footer {
     display: flex;
     flex: 1;
     flex-direction: row;
+    width: 95%;
+    gap: 20px;
 }
 
 .book-cover {
@@ -204,4 +207,89 @@ footer {
     gap: 15px;
     justify-content: center;
     margin-top: 20px;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .book-details {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .book-info {
+        padding-left: 0;
+        padding-top: 20px;
+        text-align: center;
+    }
+
+    .book-title {
+        text-align: center;
+    }
+
+    .book {
+        width: 140px;
+        height: 200px;
+    }
+
+    header {
+        padding: 10px;
+    }
+
+    .logo {
+        width: 40px;
+        height: 40px;
+    }
+
+    header h1 {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .library {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 15px;
+    }
+
+    .book {
+        width: 120px;
+        height: 180px;
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .page-button {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+
+    .book-cover {
+        width: 160px;
+        height: 240px;
+    }
+
+    .button {
+        width: 160px;
+        font-size: 16px;
+    }
+}
+
+/* Ajuste para telas muito pequenas */
+@media (max-width: 320px) {
+    .library {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+
+    .book {
+        width: 100px;
+        height: 150px;
+    }
+
+    .age-rating {
+        padding: 3px 6px;
+        font-size: 0.8rem;
+    }
 }

@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "18": "age-18"
     };
 
-    const booksPerPage = 16;
+    const booksPerPage = 12;
     let currentPage = 1;
     const totalPages = Math.ceil(books.length / booksPerPage);
 
