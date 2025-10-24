@@ -1,5 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
     const library = document.querySelector(".library");
+    const searchInput = document.getElementById("searchInput");
+    const ageFilters = document.querySelectorAll(".age-filter");
+    const resultsCount = document.getElementById("resultsCount");
+    const noResults = document.querySelector(".no-results");
 
     const books = [
         { title: "Pai Rico, Pai Pobre", author: "Robert Kiyosaki", description: "Um dos livros mais influentes sobre educação financeira, ensinando a importância do mindset certo para alcançar a independência financeira e construir riqueza.", age: "14", image: "livro1.jpg" },
@@ -35,7 +39,6 @@ document.addEventListener("DOMContentLoaded", () => {
         { title: "O Ego é Seu Inimigo", author: "Ryan Holiday", description: "Um guia inspirador sobre como superar o ego para alcançar o verdadeiro sucesso e desenvolver humildade e disciplina.", age: "16", image: "livro31.jpg" },
         { title: "As Aventuras De Mike", author: "Gabriel Dearo e Manu Digilio", description: "Uma história divertida cheia de confusões e humor, inspirada no canal de YouTube 'Falaidearo'.", age: "L", image: "livro32.jpg" }
     ];
-    
 
     const ageColors = {
         "L": "age-livre",
@@ -48,52 +51,171 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const booksPerPage = 12;
     let currentPage = 1;
-    const totalPages = Math.ceil(books.length / booksPerPage);
+    let filteredBooks = [...books];
+    let currentAgeFilter = "all";
+    let currentSearchTerm = "";
 
-    function renderBooks(page) {
+    function filterBooks() {
+        filteredBooks = books.filter(book => {
+            const matchesAge = currentAgeFilter === "all" || book.age === currentAgeFilter;
+            const matchesSearch = currentSearchTerm === "" ||
+                book.title.toLowerCase().includes(currentSearchTerm.toLowerCase()) ||
+                book.author.toLowerCase().includes(currentSearchTerm.toLowerCase());
+
+            return matchesAge && matchesSearch;
+        });
+
+        currentPage = 1;
+        updateResultsCount();
+        renderBooks();
+    }
+
+    function updateResultsCount() {
+        const count = filteredBooks.length;
+        const total = books.length;
+
+        if (currentAgeFilter === "all" && currentSearchTerm === "") {
+            resultsCount.textContent = `${total} livros disponíveis`;
+        } else {
+            resultsCount.textContent = `${count} ${count === 1 ? 'livro encontrado' : 'livros encontrados'}`;
+        }
+
+        if (count === 0) {
+            library.style.display = "none";
+            noResults.style.display = "flex";
+            document.querySelector(".pagination").style.display = "none";
+        } else {
+            library.style.display = "grid";
+            noResults.style.display = "none";
+            document.querySelector(".pagination").style.display = "flex";
+        }
+    }
+
+    function renderBooks() {
         library.innerHTML = "";
-        const start = (page - 1) * booksPerPage;
+        const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
+        const start = (currentPage - 1) * booksPerPage;
         const end = start + booksPerPage;
-        const booksToRender = books.slice(start, end);
+        const booksToRender = filteredBooks.slice(start, end);
 
-        booksToRender.forEach(book => {
+        booksToRender.forEach((book, index) => {
             const bookElement = document.createElement("div");
             bookElement.classList.add("book");
-            bookElement.style.backgroundImage = `url(assets/capas/${book.image})`;
+            bookElement.style.backgroundImage = `url(public/assets/capas/${book.image})`;
+            bookElement.style.animationDelay = `${index * 0.05}s`;
 
             bookElement.innerHTML = `
                 <div class="overlay"></div>
                 <div class="age-rating ${ageColors[book.age]}">${book.age}</div>
             `;
+
             bookElement.addEventListener("click", () => {
                 window.location.href = `details.html?title=${encodeURIComponent(book.title)}&author=${encodeURIComponent(book.author)}&image=${encodeURIComponent(book.image)}&age=${book.age}&desc=${encodeURIComponent(book.description)}`;
-            });         
-            
+            });
 
             library.appendChild(bookElement);
         });
 
-        renderPagination();
+        renderPagination(totalPages);
     }
 
-    function renderPagination() {
+    function renderPagination(totalPages) {
         const pagination = document.querySelector(".pagination");
         pagination.innerHTML = "";
 
-        for (let i = 1; i <= totalPages; i++) {
-            const pageButton = document.createElement("button");
-            pageButton.textContent = i;
-            pageButton.classList.add("page-button");
-            if (i === currentPage) {
-                pageButton.classList.add("active");
-            }
-            pageButton.addEventListener("click", () => {
-                currentPage = i;
-                renderBooks(currentPage);
+        if (totalPages <= 1) return;
+
+        if (currentPage > 1) {
+            const prevButton = document.createElement("button");
+            prevButton.innerHTML = '<i class="bi bi-chevron-left"></i>';
+            prevButton.classList.add("page-button", "nav-button");
+            prevButton.addEventListener("click", () => {
+                currentPage--;
+                renderBooks();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
+            pagination.appendChild(prevButton);
+        }
+
+        const maxVisible = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+
+        if (endPage - startPage < maxVisible - 1) {
+            startPage = Math.max(1, endPage - maxVisible + 1);
+        }
+
+        if (startPage > 1) {
+            const firstButton = createPageButton(1);
+            pagination.appendChild(firstButton);
+
+            if (startPage > 2) {
+                const dots = document.createElement("span");
+                dots.textContent = "...";
+                dots.classList.add("pagination-dots");
+                pagination.appendChild(dots);
+            }
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            const pageButton = createPageButton(i);
             pagination.appendChild(pageButton);
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                const dots = document.createElement("span");
+                dots.textContent = "...";
+                dots.classList.add("pagination-dots");
+                pagination.appendChild(dots);
+            }
+
+            const lastButton = createPageButton(totalPages);
+            pagination.appendChild(lastButton);
+        }
+
+        if (currentPage < totalPages) {
+            const nextButton = document.createElement("button");
+            nextButton.innerHTML = '<i class="bi bi-chevron-right"></i>';
+            nextButton.classList.add("page-button", "nav-button");
+            nextButton.addEventListener("click", () => {
+                currentPage++;
+                renderBooks();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            pagination.appendChild(nextButton);
         }
     }
 
-    renderBooks(currentPage);
+    function createPageButton(pageNum) {
+        const pageButton = document.createElement("button");
+        pageButton.textContent = pageNum;
+        pageButton.classList.add("page-button");
+        if (pageNum === currentPage) {
+            pageButton.classList.add("active");
+        }
+        pageButton.addEventListener("click", () => {
+            currentPage = pageNum;
+            renderBooks();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        return pageButton;
+    }
+
+    ageFilters.forEach(filter => {
+        filter.addEventListener("click", () => {
+            ageFilters.forEach(f => f.classList.remove("active"));
+            filter.classList.add("active");
+            currentAgeFilter = filter.dataset.age;
+            filterBooks();
+        });
+    });
+
+    searchInput.addEventListener("input", (e) => {
+        currentSearchTerm = e.target.value;
+        filterBooks();
+    });
+
+    updateResultsCount();
+    renderBooks();
 });

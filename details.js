@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     document.querySelector(".book-title").textContent = params.get("title");
     document.querySelector(".book-author").textContent = params.get("author");
-    document.querySelector(".book-cover").style.backgroundImage = `url(assets/capas/${params.get("image")})`;
+    document.querySelector(".book-cover").style.backgroundImage = `url(public/assets/capas/${params.get("image")})`;
     document.querySelector(".book-description").textContent = params.get("desc");
 
     const age = params.get("age");
