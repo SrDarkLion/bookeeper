@@ -1,24 +1,29 @@
 document.addEventListener("DOMContentLoaded", () => {
     const params = new URLSearchParams(window.location.search);
-    const currentAge = params.get("age");
+    const bookId = parseInt(params.get("id"));
 
-    const ageColors = {
-        "L": "age-livre",
-        "10": "age-10",
-        "12": "age-12",
-        "14": "age-14",
-        "16": "age-16",
-        "18": "age-18"
-    };
+    const booksData = JSON.parse(localStorage.getItem('booksData'));
     
-    document.querySelector(".book-title").textContent = params.get("title");
-    document.querySelector(".book-author").textContent = params.get("author");
-    document.querySelector(".book-cover").style.backgroundImage = `url(public/assets/capas/${params.get("image")})`;
-    document.querySelector(".book-description").textContent = params.get("desc");
+    if (!booksData || !bookId) {
+        window.location.href = '404.html';
+        return;
+    }
 
-    const age = params.get("age");
+    const book = booksData.find(b => b.id === bookId);
+    
+    if (!book) {
+        window.location.href = '404.html';
+        return;
+    }
+
+    document.querySelector(".book-title").textContent = book.title;
+    document.querySelector(".book-author").textContent = book.author;
+    document.querySelector(".book-cover").style.backgroundImage = `url(public/assets/capas/${book.image})`;
+    document.querySelector(".book-description").textContent = book.description;
+
     const ageBadge = document.querySelector(".age-rating-two .age-badge-two");
-    ageBadge.textContent = age;
-    ageBadge.classList.add(`age-${age}`);
-}
-);
+    ageBadge.textContent = book.age;
+    ageBadge.classList.add(`age-${book.age}`);
+
+    document.title = `${book.title} - Bookeeper`;
+});
